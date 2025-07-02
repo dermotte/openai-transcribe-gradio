@@ -3,6 +3,8 @@ import ffmpeg
 import gradio as gr
 from openai import OpenAI
 
+open_ai_key = None
+
 def find_next_available_filename(base_name, extension):
   """
   Checks for the existence of sequentially numbered filenames and returns the next available one.
@@ -68,7 +70,7 @@ def process_file(fileobj):
     audio_file= open(path, "rb")
 
     # starting the transcription
-    client = OpenAI()
+    client = OpenAI(api_key=open_ai_key.value)
 
     transcription = client.audio.transcriptions.create(
         model="gpt-4o-mini-transcribe", 
@@ -77,9 +79,11 @@ def process_file(fileobj):
     return save_transcription_to_file(transcription=transcription.text, original_mp3_filename=path)
 
 with gr.Blocks() as demo:
-    upload_button = gr.UploadButton("Click to Upload a File", file_types=["audio"], file_count="single")
-    file_output = gr.File()
-    upload_button.upload(process_file, upload_button, file_output)
+    with gr.Accordion("API Keys"):
+      open_ai_key = gr.Textbox( label="OpenAI Key")
+    file_upload = gr.File(label="Upload an Audio File to Transcribe", file_types=["audio"], file_count="single")
+    file_output = gr.File(label="Download Transcription")
+    file_upload.upload(process_file, file_upload, file_output)
 
 
 if __name__ == "__main__":
