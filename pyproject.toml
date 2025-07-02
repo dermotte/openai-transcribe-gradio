@@ -1,0 +1,11 @@
+[project]
+name = "openai-transcribe-gradio"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "ffmpeg-python>=0.2.0",
+    "gradio>=5.35.0",
+    "openai>=1.93.0",
+]
